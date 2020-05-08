@@ -24,6 +24,9 @@ class InterpolatingPolynomial:
     def theoretical_error(self, fx, degree, interval_start, interval_end):
         return (Utility.maximum_absolute_value(fx, self.symbol, interval_start, interval_end, degree + 1) * sym.Abs(self.basis_polynomial(degree + 1)))/sym.factorial(degree + 1)
 
+    def practical_error_polynomial_difference(self, degree):
+        return sym.Abs(self.polynomial(degree + 1) - self.polynomial(degree))
+
     def fit(self, function):
         return all([
             function.subs(self.symbol, xi) == yi 
@@ -62,6 +65,9 @@ class NetwonInterpolatingPolynomial(InterpolatingPolynomial):
         if self._coefficient[degree][index] is None:
             self._coefficient[degree][index] = (self.coefficient(degree - 1, index) - self.coefficient(degree - 1, index + 1))/(self.x_values[index] - self.x_values[index + degree])
         return self._coefficient[degree][index]
+
+    def practical_error_next_degree(self, degree):
+        return sym.Abs(self.coefficient(degree, 0)) * sym.Abs(self.basis_polynomial(degree))
 
     def coefficients(self, degree):
         return self._coefficient[:degree + 1]
