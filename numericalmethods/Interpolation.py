@@ -125,7 +125,8 @@ class InterpolatingSpline:
         self.y_values = y_values
         self.symbol = symbol
 
-    def is_spline(self, functions, points, degree=None, places=5):
+    @staticmethod
+    def is_spline(functions, points, degree=None, places=5):
         max_degree = max([sym.degree(x) for x in functions])
         precission = 10**(-places)
         current_degree = 0
