@@ -1,6 +1,7 @@
 from functools import reduce 
 import sympy as sym
 import operator
+from numericalmethods import Utility
 
 class InterpolatingPolynomial:
 
@@ -16,6 +17,12 @@ class InterpolatingPolynomial:
             [self.symbol - x for i, x in enumerate(self.x_values[offset:degree+offset]) if i != skip],
             1
         )
+
+    def error(self, fx, degree):
+        return sym.Abs(fx - self.polynomial(degree))
+
+    def theoretical_error(self, fx, degree, interval_start, interval_end):
+        return (Utility.maximum_absolute_value(fx, self.symbol, interval_start, interval_end, degree + 1) * sym.Abs(self.basis_polynomial(degree + 1)))/sym.factorial(degree + 1)
 
     def fit(self, function):
         return all([

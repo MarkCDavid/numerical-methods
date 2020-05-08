@@ -1,5 +1,6 @@
 import unittest
 import sympy as sym
+import numpy as np
 from numericalmethods import Interpolation
 from test.cassert import CustomAssertions
 
@@ -20,12 +21,37 @@ class InterpolatingPolynomialTest(unittest.TestCase):
         self.assertEqual(polynomial.basis_polynomial(2, offset=2), (x - 3)*(x - 4))
         self.assertEqual(polynomial.basis_polynomial(3, offset=1), (x - 2)*(x - 3)*(x - 4))
 
-        
         self.assertEqual(polynomial.basis_polynomial(2, skip=0), (x - 2))
         self.assertEqual(polynomial.basis_polynomial(2, skip=1), (x - 1))
         self.assertEqual(polynomial.basis_polynomial(3, skip=0), (x - 2)*(x - 3))
         self.assertEqual(polynomial.basis_polynomial(3, skip=1), (x - 1)*(x - 3))
         self.assertEqual(polynomial.basis_polynomial(3, skip=2), (x - 1)*(x - 2))
+
+    def test_error(self):
+        x = sym.Symbol('x')
+        fx = sym.exp(x**2)
+        x_values = np.arange(-1, 1.1, 0.2)
+        y_values = [fx.subs(x, xi) for xi in x_values]
+        N_values = [1, 2, 3, 8, 9, 10]
+        r_values = [0.05947, 0.01464, 0.00493, 0.00008, 0.00005, 0.00001]
+        at = -0.9
+
+        lip = Interpolation.LagrangeInterpolatingPolynomial(x_values, y_values, x)
+        for N, r in zip(N_values, r_values):
+            self.assertAlmostEqual(lip.error(fx, N).subs(x, at), r, places=5)
+
+    def test_theoretical_error(self):
+        x = sym.Symbol('x')
+        fx = sym.exp(x**2)
+        x_values = np.arange(-1, 1.1, 0.2)
+        y_values = [fx.subs(x, xi) for xi in x_values]
+        N_values = [1, 2, 3, 8, 9, 10]
+        r_values = [0.05947, 0.01464, 0.00493, 0.00008, 0.00005, 0.00001]
+        at = -0.9
+
+        lip = Interpolation.LagrangeInterpolatingPolynomial(x_values, y_values, x)
+        for N, r in zip(N_values, r_values):
+            self.assertAlmostEqual(lip.error(fx, N).subs(x, at), r, places=5)
 
     def test_fit(self):
         x = sym.Symbol('x')
@@ -71,7 +97,7 @@ class NewtonInterpolatingPolynomialTest(unittest.TestCase, CustomAssertions):
         self.assertSymPyEqual(Interpolation.NetwonInterpolatingPolynomial([-2, 0, 1], [0, -2, 0], x).polynomial(2), x**2 + x - 2)
         self.assertSymPyEqual(Interpolation.NetwonInterpolatingPolynomial([-3, -1, 0, 2], [0, 12, 12, 30], x).polynomial(3), x**3 + 2*x**2 + x + 12)
 
-    
+
 class LagrangeInterpolatingPolynomialTest(unittest.TestCase, CustomAssertions):
 
     def test_coefficient(self):
