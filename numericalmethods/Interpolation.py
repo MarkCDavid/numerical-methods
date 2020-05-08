@@ -10,6 +10,9 @@ class InterpolatingPolynomial:
         self.size = len(x_values)
         self.symbol = symbol
 
+    def basis_polynomial(self, degree, offset=0):
+        return reduce(operator.mul, [self.symbol - x for x in self.x_values[offset:degree]], 1)
+
     def fit(self, function):
         return all([
             function.subs(self.symbol, xi) == yi 
@@ -44,9 +47,6 @@ class NetwonInterpolatingPolynomial(InterpolatingPolynomial):
         else:
             return sym.simplify(self.polynomial(degree - 1) + self.basis_polynomial(degree) * self.coefficient(degree))
 
-    def basis_polynomial(self, degree):
-        return reduce(operator.mul, [self.symbol - x for x in self.x_values[:degree]], 1)
-    
     def coefficient(self, degree, index=0):
         if self._coefficient[degree][index] is None:
             self._coefficient[degree][index] = (self.coefficient(degree - 1, index) - self.coefficient(degree - 1, index + 1))/(self.x_values[index] - self.x_values[index + degree])
@@ -54,3 +54,12 @@ class NetwonInterpolatingPolynomial(InterpolatingPolynomial):
 
     def coefficients(self, degree):
         return self._coefficient[:degree + 1]
+
+        
+class LagrangeInterpolatingPolynomial(InterpolatingPolynomial):
+
+    def polynomial(self, degree):
+        pass
+
+    def coefficient(self, degree, index):
+        pass

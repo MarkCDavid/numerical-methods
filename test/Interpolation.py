@@ -5,6 +5,18 @@ from test.cassert import CustomAssertions
 
 class InterpolatingPolynomialTest(unittest.TestCase):
 
+    def test_basis_polynomial(self):
+        x = sym.Symbol('x')
+        x_values = [1, 2, 3, 4]
+        y_values = [1, 2, 3, 4]
+        polynomial = Interpolation.InterpolatingPolynomial(x_values, y_values, x)
+
+        self.assertEqual(polynomial.basis_polynomial(1), (x - 1))
+        self.assertEqual(polynomial.basis_polynomial(2), (x - 1)*(x - 2))
+        self.assertEqual(polynomial.basis_polynomial(3), (x - 1)*(x - 2)*(x - 3))
+        self.assertEqual(polynomial.basis_polynomial(4), (x - 1)*(x - 2)*(x - 3)*(x - 4))
+
+
     def test_fit(self):
         x = sym.Symbol('x')
         x_values = [-2, -1, 0, 1, 2, 3]
@@ -42,17 +54,6 @@ class NewtonInterpolatingPolynomialTest(unittest.TestCase, CustomAssertions):
             [0.16666666666666666, -0.16666666666666666],
             [-0.08333333333333333]]
         )
-
-    def test_basis_polynomial(self):
-        x = sym.Symbol('x')
-        x_values = [1, 2, 3, 4]
-        y_values = [1, 2, 3, 4]
-        polynomial = Interpolation.NetwonInterpolatingPolynomial(x_values, y_values, x)
-
-        self.assertEqual(polynomial.basis_polynomial(1), (x - 1))
-        self.assertEqual(polynomial.basis_polynomial(2), (x - 1)*(x - 2))
-        self.assertEqual(polynomial.basis_polynomial(3), (x - 1)*(x - 2)*(x - 3))
-        self.assertEqual(polynomial.basis_polynomial(4), (x - 1)*(x - 2)*(x - 3)*(x - 4))
 
     def test_polynomial(self):
         x = sym.Symbol('x')
