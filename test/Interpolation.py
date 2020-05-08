@@ -112,5 +112,60 @@ class LagrangeInterpolatingPolynomialTest(unittest.TestCase, CustomAssertions):
         self.assertSymPyEqual(Interpolation.LagrangeInterpolatingPolynomial([-2, 0, 1], [0, -2, 0], x).polynomial(2), x**2 + x - 2)
         self.assertSymPyEqual(Interpolation.LagrangeInterpolatingPolynomial([-3, -1, 0, 2], [0, 12, 12, 30], x).polynomial(3), x**3 + 2*x**2 + x + 12)
 
+
+class InterpolatingSplineTest(unittest.TestCase, CustomAssertions):
+
+    def test_is_spline(self):
+        x = sym.Symbol('x')
+
+        functions = [
+            x**2, 
+            1/9*x**2 + 16/9*x - 8/9, 
+            17/75*x**2 + 64/75*x + 24/25
+        ]
+        points = [0, 1, 4, 9]
+        self.assertEqual(
+            Interpolation.InterpolatingSpline(None, None, x).is_spline(functions, points),
+            (True, 2)
+        )
+
+        functions = [
+            x**3 - x**2 + 2*x - 1, 
+            -x**2 + 2*x - 1, 
+            x**3 - 4*x**2 + 5*x - 2,
+            x**3 + x**2 - 25*x + 43
+        ]
+        points = [-2, 0, 1, 3, 4]
+        self.assertEqual(
+            Interpolation.InterpolatingSpline(None, None, x).is_spline(functions, points),
+            (False, 2)
+        )
+
+        functions = [
+            4*x**2 + 2,
+            3*x + 10,
+            x - 1
+        ]
+        points = [0, 1, 4, 7]
+        self.assertEqual(
+            Interpolation.InterpolatingSpline(None, None, x).is_spline(functions, points),
+            (False, 0)
+        )
+
+        functions = [
+            -2.25*x**2 + 9*x + 99,
+            3.25*x**2 - 57*x + 297,
+            -3.25*x**2 + 73*x - 353,
+            3.5*x**2 - 116*x + 970,
+            -3.25*x**2 + 127*x - 1217,
+            3.875*x**2 - 186.5*x + 2231.5,
+        ]
+        points = [2, 6, 10, 14, 18, 22, 26]
+        self.assertEqual(
+            Interpolation.InterpolatingSpline(None, None, x).is_spline(functions, points, places=4),
+            (True, 2)
+        )
+
+   
 if __name__ == '__main__':
     unittest.main()
