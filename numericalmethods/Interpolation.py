@@ -1,7 +1,7 @@
 """Interpolation module, designed to assist solving excercises in university course for Numerical Methods."""
 
 from functools import reduce
-from numericalmethods import Utility
+import Utility
 import sympy as sym
 import operator
 
@@ -110,12 +110,12 @@ class LagrangeInterpolatingPolynomial(InterpolatingPolynomial):
 
     def polynomial(self, degree, offset=0):
         """Generate an interpolating polynomial of specified degree."""
-        return sum([(self.coefficient(degree, index, offset=offset) * self.y_values[index]) for index in range(degree + 1 + offset)])
+        return sum([(self.coefficient(degree, index, offset=offset) * self.y_values[index + offset]) for index in range(degree + 1)])
 
     def coefficient(self, degree, index, offset=0):
         """Generate Lagrangian coefficient of specified degree and index."""
         basis = self.basis_polynomial(degree + 1, skip=index, offset=offset)
-        return basis/basis.subs(self.symbol, self.x_values[index])
+        return basis/basis.subs(self.symbol, self.x_values[index + offset])
 
 
 class InterpolatingSpline:
@@ -123,6 +123,7 @@ class InterpolatingSpline:
     def __init__(self, x_values, y_values, symbol):
         self.x_values = x_values
         self.y_values = y_values
+        self.size = len(x_values)
         self.symbol = symbol
 
     @staticmethod
@@ -136,3 +137,8 @@ class InterpolatingSpline:
                 return (current_degree >= max_degree, current_degree) if degree is None else (current_degree == degree, current_degree)
             functions = [sym.diff(fx, self.symbol) for fx in functions]
             current_degree += 1
+
+class LinearInterpolatingSpline(InterpolatingSpline):
+
+    def spline(self):
+        return [LagrangeInterpolatingPolynomial(self.x_values, self.y_values, self.symbol).polynomial(1, offset=offset) for offset in range(self.size - 1)]

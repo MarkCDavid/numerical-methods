@@ -166,6 +166,5 @@ class InterpolatingSplineTest(unittest.TestCase, CustomAssertions):
             (True, 2)
         )
 
-   
 if __name__ == '__main__':
     unittest.main()
