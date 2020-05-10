@@ -5,6 +5,7 @@ Contains methods that do not belong to a specific category.
 
 import sympy as sym
 import numpy as np
+import json
 
 def value_sampling(fx, symbol, interval_start, interval_end, step_size=0.05):
     """Sample the values of a function within the specified interval."""
@@ -36,14 +37,19 @@ class Memoized:
     First call to the function performs the calculation and the return value is memoized. Sequential calls return memoized value.
     """
 
+    @staticmethod
+    def key(*args, **kwargs):
+        return args, json.dumps(kwargs)
+
     def __init__(self, function, initial_values=None):
         """Create memoization wrapper."""
         self.values = {} if initial_values is None else initial_values
         self.function = function
 
-    def __call__(self, *args):
+    def __call__(self, *args, **kwargs):
         """Perform calculation/memoization."""
-        if args not in self.values:
-            self.values[args] = self.function(*args)
-        return self.values[args]
+        key = Memoized.key(*args, *kwargs)
+        if key not in self.values:
+            self.values[key] = self.function(*args, **kwargs)
+        return self.values[key]
 

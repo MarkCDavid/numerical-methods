@@ -82,7 +82,7 @@ class NewtonInterpolatingPolynomialTest(unittest.TestCase, CustomAssertions):
         x_values = [0, 1, 3, 4]
         y_values = [3, 2, 1, 0]
         polynomial = Interpolation.NewtonInterpolatingPolynomial(x_values, y_values, x)
-
+        
         self.assertAlmostEqual(
             polynomial.coefficients(3), 
             [[3, 2, 1, 0],
@@ -168,7 +168,7 @@ class InterpolatingSplineTest(unittest.TestCase):
 
 class SpecificInterpolatingSplineTest(unittest.TestCase, CustomAssertions):
 
-    def test_spline(self):
+    def test_linear_spline(self):
         x = sym.Symbol('x')
         x_values = [2, 6, 10, 14, 18, 22, 26]
         y_values = [108, 72, 52, 32, 16, 4, 2]
@@ -192,6 +192,12 @@ class SpecificInterpolatingSplineTest(unittest.TestCase, CustomAssertions):
             [x[1] for x in result]
         )
 
+    def test_square_spline(self):
+        x = sym.Symbol('x')
+        x_values = [2, 6, 10, 14, 18, 22, 26]
+        y_values = [108, 72, 52, 32, 16, 4, 2]
+
+
         expected = [
             (-2.25*x**2 + 9*x + 99, Utility.interval(2, 6, x)),
             (3.25*x**2 - 57*x + 297, Utility.interval(6, 10, x)),
@@ -209,6 +215,11 @@ class SpecificInterpolatingSplineTest(unittest.TestCase, CustomAssertions):
             [x[1] for x in expected],
             [x[1] for x in result]
         )
+        
+    def test_cubic_spline(self):
+        x = sym.Symbol('x')
+        x_values = [2, 6, 10, 14, 18, 22, 26]
+        y_values = [108, 72, 52, 32, 16, 4, 2]
 
         expected = [
             (0.0681*x**3 - 0.4084*x**2 - 9.2723*x + 127.6337, Utility.interval(2, 6, x)),
