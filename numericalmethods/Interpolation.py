@@ -1,7 +1,7 @@
 """Interpolation module, designed to assist solving excercises in university course for Numerical Methods."""
 
 from functools import reduce
-import Utility
+from numericalmethods import Utility
 import sympy as sym
 import operator
 
@@ -80,8 +80,7 @@ class NetwonInterpolatingPolynomial(InterpolatingPolynomial):
     def __init__(self, x_values, y_values, symbol):
         """Create an interpolating polynomial generator."""
         super().__init__(x_values, y_values, symbol)
-        self._coefficient = [[None for _ in range(self.size - i)] if i != 0 else self.y_values for i in range(self.size) ]
-        self.coefficient(self.size - 1, 0)
+        self.__newton_differences = NewtonDifferences(x_values, y_values)
     
     def polynomial(self, degree):
         """Generate an interpolating polynomial of specified degree."""
@@ -91,18 +90,16 @@ class NetwonInterpolatingPolynomial(InterpolatingPolynomial):
             return sym.simplify(self.polynomial(degree - 1) + self.basis_polynomial(degree) * self.coefficient(degree))
 
     def coefficient(self, degree, index=0):
-        """Generate Newton Difference coefficient of specified degree."""
-        if self._coefficient[degree][index] is None:
-            self._coefficient[degree][index] = (self.coefficient(degree - 1, index) - self.coefficient(degree - 1, index + 1))/(self.x_values[index] - self.x_values[index + degree])
-        return self._coefficient[degree][index]
+        """Fetch Newton Difference coefficient of specified degree."""
+        return self.__newton_differences.coefficient(degree, index)
 
     def practical_error_next_degree(self, degree):
         """Calculate the interpolation error using approximation. Returns a symbolic function."""
         return sym.Abs(self.coefficient(degree, 0)) * sym.Abs(self.basis_polynomial(degree))
 
     def coefficients(self, degree):
-        """Generate Newton Difference coefficient table of specified degree."""
-        return self._coefficient[:degree + 1]
+        """Fetch Newton Difference coefficient table of specified degree."""
+        return self.__newton_differences.coefficients(degree)
 
         
 class LagrangeInterpolatingPolynomial(InterpolatingPolynomial):
@@ -127,18 +124,41 @@ class InterpolatingSpline:
         self.symbol = symbol
 
     @staticmethod
-    def is_spline(functions, points, degree=None, places=5):
+    def is_spline(functions, points, symbol, degree=None, places=5):
         max_degree = max([sym.degree(x) for x in functions])
         precission = 10**(-places)
         current_degree = 0
         while True:
-            max_difference = max([sym.Abs(f0.subs(self.symbol, xi) - f1.subs(self.symbol, xi)) for f0, f1, xi in zip(functions, functions[1:], points[1:])])
+            max_difference = max([sym.Abs(f0.subs(symbol, xi) - f1.subs(symbol, xi)) for f0, f1, xi in zip(functions, functions[1:], points[1:])])
             if max_difference > precission:
                 return (current_degree >= max_degree, current_degree) if degree is None else (current_degree == degree, current_degree)
-            functions = [sym.diff(fx, self.symbol) for fx in functions]
+            functions = [sym.diff(fx, symbol) for fx in functions]
             current_degree += 1
+
 
 class LinearInterpolatingSpline(InterpolatingSpline):
 
     def spline(self):
         return [LagrangeInterpolatingPolynomial(self.x_values, self.y_values, self.symbol).polynomial(1, offset=offset) for offset in range(self.size - 1)]
+
+
+class NewtonDifferences:
+
+    def __init__(self, x_values, y_values):
+        """Construct NewtonDifferences data class."""
+        size = len(x_values)
+        self._coefficient = Utility.triangle_array(size)
+        self._coefficient[0] = y_values
+        self.__recursive_coefficient(x_values, size - 1, 0)
+        
+    def __recursive_coefficient(self, x_values, degree, index):
+        """Generate Newton Difference coefficient of specified degree."""
+        if self._coefficient[degree][index] is None:
+            self._coefficient[degree][index] = (self.__recursive_coefficient(x_values, degree - 1, index) - self.__recursive_coefficient(x_values, degree - 1, index + 1))/(x_values[index] - x_values[index + degree])
+        return self._coefficient[degree][index]
+
+    def coefficient(self, degree, index=0):
+        return self._coefficient[degree][index]
+    
+    def coefficients(self, degree):
+        return self._coefficient[:degree + 1]

@@ -125,7 +125,7 @@ class InterpolatingSplineTest(unittest.TestCase, CustomAssertions):
         ]
         points = [0, 1, 4, 9]
         self.assertEqual(
-            Interpolation.InterpolatingSpline(None, None, x).is_spline(functions, points),
+            Interpolation.InterpolatingSpline.is_spline(functions, points, x),
             (True, 2)
         )
 
@@ -137,7 +137,7 @@ class InterpolatingSplineTest(unittest.TestCase, CustomAssertions):
         ]
         points = [-2, 0, 1, 3, 4]
         self.assertEqual(
-            Interpolation.InterpolatingSpline(None, None, x).is_spline(functions, points),
+            Interpolation.InterpolatingSpline.is_spline(functions, points, x),
             (False, 2)
         )
 
@@ -148,7 +148,7 @@ class InterpolatingSplineTest(unittest.TestCase, CustomAssertions):
         ]
         points = [0, 1, 4, 7]
         self.assertEqual(
-            Interpolation.InterpolatingSpline(None, None, x).is_spline(functions, points),
+            Interpolation.InterpolatingSpline.is_spline(functions, points, x),
             (False, 0)
         )
 
@@ -162,7 +162,7 @@ class InterpolatingSplineTest(unittest.TestCase, CustomAssertions):
         ]
         points = [2, 6, 10, 14, 18, 22, 26]
         self.assertEqual(
-            Interpolation.InterpolatingSpline(None, None, x).is_spline(functions, points, places=4),
+            Interpolation.InterpolatingSpline.is_spline(functions, points, x, places=4),
             (True, 2)
         )
 

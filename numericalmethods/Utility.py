@@ -16,3 +16,7 @@ def maximum_absolute_value(fx, symbol, interval_start, interval_end, derivative_
     Provides a possibility to provide a derivative degree.
     """
     return max(value_sampling(sym.Abs(sym.diff(fx, symbol, derivative_degree)), symbol, interval_start, interval_end, step_size))
+
+def triangle_array(size, default_value=None):
+    """Create a triangular array."""
+    return [[default_value for _ in range(size - i)] for i in range(size)]
