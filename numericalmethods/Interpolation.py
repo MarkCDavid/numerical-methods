@@ -9,7 +9,7 @@ import operator
 class InterpolatingPolynomial:
     """Base class for Polynomial Interpolation.
     
-    Unable to generate polynomials. Use NetwonInterpolatingPolynomial or LagrangeInterpolatingPolynomial classes.
+    Unable to generate polynomials. Use NewtonInterpolatingPolynomial or LagrangeInterpolatingPolynomial classes.
     """
 
     def __init__(self, x_values, y_values, symbol):
@@ -74,7 +74,7 @@ class InterpolatingPolynomial:
         """Generate a polynomial. Non-functional for the base class."""
         raise NotImplementedError("Using a base class. No method for polynomial generation.")
 
-class NetwonInterpolatingPolynomial(InterpolatingPolynomial):
+class NewtonInterpolatingPolynomial(InterpolatingPolynomial):
     """Polynomial Interpolation using Netwon Method."""
 
     def __init__(self, x_values, y_values, symbol):
