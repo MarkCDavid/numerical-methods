@@ -153,7 +153,7 @@ class LinearInterpolatingSpline(InterpolatingSpline):
     """Spline Interpolation using Linear Polynomials."""
 
     def piece(self, index, natural=0):
-    """Calculate a spline piece function, for values at specified index. Calculated using Linear Interpolating Polynomial."""
+        """Calculate a spline piece function, for values at specified index. Calculated using Linear Interpolating Polynomial."""
         return LagrangeInterpolatingPolynomial(self.x_values, self.y_values, self.symbol).polynomial(1, offset=index)
 
 class SquareInterpolatingSpline(InterpolatingSpline):
