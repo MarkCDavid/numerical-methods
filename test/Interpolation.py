@@ -1,7 +1,7 @@
 import unittest
 import sympy as sym
 import numpy as np
-from numericalmethods import Interpolation
+from numericalmethods import Interpolation, Utility
 from test.cassert import CustomAssertions
 
 class InterpolatingPolynomialTest(unittest.TestCase):
@@ -113,7 +113,7 @@ class LagrangeInterpolatingPolynomialTest(unittest.TestCase, CustomAssertions):
         self.assertSymPyEqual(Interpolation.LagrangeInterpolatingPolynomial([-3, -1, 0, 2], [0, 12, 12, 30], x).polynomial(3), x**3 + 2*x**2 + x + 12)
 
 
-class InterpolatingSplineTest(unittest.TestCase, CustomAssertions):
+class InterpolatingSplineTest(unittest.TestCase):
 
     def test_is_spline(self):
         x = sym.Symbol('x')
@@ -164,6 +164,68 @@ class InterpolatingSplineTest(unittest.TestCase, CustomAssertions):
         self.assertEqual(
             Interpolation.InterpolatingSpline.is_spline(functions, points, x, places=4),
             (True, 2)
+        )
+
+class SpecificInterpolatingSplineTest(unittest.TestCase, CustomAssertions):
+
+    def test_spline(self):
+        x = sym.Symbol('x')
+        x_values = [2, 6, 10, 14, 18, 22, 26]
+        y_values = [108, 72, 52, 32, 16, 4, 2]
+
+
+        expected = [
+            (126 - 9*x, Utility.interval(2, 6, x)),
+            (102 - 5*x, Utility.interval(6, 10, x)),
+            (102 - 5*x, Utility.interval(10, 14, x)),
+            (88 - 4*x, Utility.interval(14, 18, x)),
+            (70 - 3*x, Utility.interval(18, 22, x)),
+            (15 - 0.5*x, Utility.interval(22, 26, x))
+        ]
+        result = Interpolation.LinearInterpolatingSpline(x_values, y_values, x).spline()
+        self.assertSymPyListAlmostEqual(
+            [x[0] for x in expected],
+            [x[0] for x in result]
+        )
+        self.assertListEqual(
+            [x[1] for x in expected],
+            [x[1] for x in result]
+        )
+
+        expected = [
+            (-2.25*x**2 + 9*x + 99, Utility.interval(2, 6, x)),
+            (3.25*x**2 - 57*x + 297, Utility.interval(6, 10, x)),
+            (-3.25*x**2 + 73*x - 353, Utility.interval(10, 14, x)),
+            (3.5*x**2 - 116*x + 970, Utility.interval(14, 18, x)),
+            (-3.25*x**2 + 127*x - 1217, Utility.interval(18, 22, x)),
+            (3.875*x**2 - 186.5*x + 2231.5, Utility.interval(22, 26, x)),
+        ]
+        result = Interpolation.SquareInterpolatingSpline(x_values, y_values, x).spline()
+        self.assertSymPyListAlmostEqual(
+            [x[0] for x in expected],
+            [x[0] for x in result]
+        )
+        self.assertListEqual(
+            [x[1] for x in expected],
+            [x[1] for x in result]
+        )
+
+        expected = [
+            (0.0681*x**3 - 0.4084*x**2 - 9.2723*x + 127.6337, Utility.interval(2, 6, x)),
+            (-0.0903*x**3 + 2.4430*x**2 - 26.3809*x + 161.8510, Utility.interval(6, 10, x)),
+            (0.0433*x**3 - 1.5666*x**2 + 13.7152*x + 28.1971, Utility.interval(10, 14, x)),
+            (-0.0204*x**3 + 1.1089*x**2 - 23.7415*x + 202.9952, Utility.interval(14, 18, x)),
+            (0.0383*x**3 - 2.0584*x**2 + 33.2700*x - 139.0740, Utility.interval(18, 22, x)),
+            (-0.0389*x**3 + 3.0344*x**2 - 78.7713*x + 682.5625, Utility.interval(22, 26, x)),
+        ]
+        result = Interpolation.CubicInterpolatingSpline(x_values, y_values, x).spline()
+        self.assertSymPyListAlmostEqual(
+            [x[0] for x in expected],
+            [x[0] for x in result]
+        )
+        self.assertListEqual(
+            [x[1] for x in expected],
+            [x[1] for x in result]
         )
 
 if __name__ == '__main__':

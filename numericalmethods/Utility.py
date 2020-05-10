@@ -20,3 +20,30 @@ def maximum_absolute_value(fx, symbol, interval_start, interval_end, derivative_
 def triangle_array(size, default_value=None):
     """Create a triangular array."""
     return [[default_value for _ in range(size - i)] for i in range(size)]
+
+def interval(start, end, symbol):
+    """Create an interval."""
+    return (symbol > start) & (symbol <= end)
+
+def gap(values, index):
+    """Calculate gap between two values."""
+    return values[index + 1] - values[index]
+
+
+class Memoized:
+    """Wrapper class for function calls to be memoized.
+    
+    First call to the function performs the calculation and the return value is memoized. Sequential calls return memoized value.
+    """
+
+    def __init__(self, function, initial_values=None):
+        """Create memoization wrapper."""
+        self.values = {} if initial_values is None else initial_values
+        self.function = function
+
+    def __call__(self, *args):
+        """Perform calculation/memoization."""
+        if args not in self.values:
+            self.values[args] = self.function(*args)
+        return self.values[args]
+
