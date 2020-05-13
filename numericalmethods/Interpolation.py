@@ -85,18 +85,18 @@ class NewtonInterpolatingPolynomial(InterpolatingPolynomial):
     def __init__(self, x_values, y_values, symbol, inverse=False):
         """Create an interpolating polynomial generator."""
         super().__init__(x_values, y_values, symbol, inverse)
-        self.__newton_differences = NewtonDifferences(x_values, y_values)
+        self.__newton_differences = NewtonDifferences(self.x_values, self.y_values)
     
     def polynomial(self, degree, offset=0):
         """Generate an interpolating polynomial of specified degree."""
         if degree == 0:
             return self.y_values[degree+offset]
         else:
-            return sym.simplify(self.polynomial(degree - 1) + self.basis_polynomial(degree, offset=offset) * self.coefficient(degree))
+            return self.polynomial(degree - 1, offset=offset) + self.basis_polynomial(degree, offset=offset) * self.coefficient(degree, offset=offset)
 
-    def coefficient(self, degree, index=0):
+    def coefficient(self, degree, index=0, offset=0):
         """Fetch Newton Difference coefficient of specified degree."""
-        return self.__newton_differences.coefficient(degree, index)
+        return self.__newton_differences.coefficient(degree, index, offset=offset)
 
     def practical_error_next_degree(self, degree):
         """Calculate the interpolation error using approximation. Returns a symbolic function."""
@@ -112,7 +112,7 @@ class LagrangeInterpolatingPolynomial(InterpolatingPolynomial):
 
     def polynomial(self, degree, offset=0):
         """Generate an interpolating polynomial of specified degree."""
-        return sum([(self.coefficient(degree, index, offset=offset) * self.y_values[index + offset]) for index in range(degree + 1)])
+        return sym.N(sum([(self.coefficient(degree, index, offset=offset) * self.y_values[index + offset]) for index in range(degree + 1)]))
 
     def coefficient(self, degree, index, offset=0):
         """Generate Lagrangian coefficient of specified degree and index."""
@@ -292,5 +292,8 @@ class NewtonDifferences:
 
     def coefficients(self, degree, *, offset=0):
         """Fetch Newton Difference coefficient table of speicified degree."""
-        return [[self.coefficient(d, i, offset=offset) for i in range(self.size - offset - d)] for d in range(degree + 1)]
-        
+        return [
+            [self.coefficient(degree_index, item_index + offset) for item_index in range(item_count)]
+            for degree_index, item_count
+            in zip(range(degree + 1), reversed(range(1, degree + 2)))
+        ]

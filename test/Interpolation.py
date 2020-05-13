@@ -4,7 +4,7 @@ import numpy as np
 from numericalmethods import Interpolation, Utility
 from test.cassert import CustomAssertions
 
-class InterpolatingPolynomialTest(unittest.TestCase):
+class InterpolatingPolynomialTest(unittest.TestCase, CustomAssertions):
 
     def test_basis_polynomial(self):
         x = sym.Symbol('x')
@@ -26,6 +26,22 @@ class InterpolatingPolynomialTest(unittest.TestCase):
         self.assertEqual(polynomial.basis_polynomial(3, skip=0), (x - 2)*(x - 3))
         self.assertEqual(polynomial.basis_polynomial(3, skip=1), (x - 1)*(x - 3))
         self.assertEqual(polynomial.basis_polynomial(3, skip=2), (x - 1)*(x - 2))
+
+    def test_newton_differences(self):
+        x = sym.Symbol('x')
+        x_values = [0, 1, 3, 4]
+        y_values = [3, 2, 1, 0]
+        differences = Interpolation.NewtonDifferences(x_values, y_values)
+
+        self.assertAlmostEqual(differences.coefficient(0, 0), 3)
+        self.assertAlmostEqual(differences.coefficient(0, 0, offset=1), 2)
+        self.assertAlmostEqual(differences.coefficient(0, 0, offset=2), 1)
+
+        self.assertListEqual([[3, 2], [-1]], differences.coefficients(1))
+        self.assertListEqual([[2, 1], [-0.5]], differences.coefficients(1, offset=1))
+        self.assertListEqual([[3, 2, 1], [-1, -0.5], [1/6]], differences.coefficients(2))
+        self.assertListEqual([[2, 1, 0], [-0.5, -1], [-1/6]], differences.coefficients(2, offset=1))
+            
 
     def test_error(self):
         x = sym.Symbol('x')

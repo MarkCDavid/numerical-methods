@@ -48,7 +48,7 @@ class Memoized:
 
     def __call__(self, *args, **kwargs):
         """Perform calculation/memoization."""
-        key = Memoized.key(*args, *kwargs)
+        key = Memoized.key(*args, **kwargs)
         if key not in self.values:
             self.values[key] = self.function(*args, **kwargs)
         return self.values[key]
