@@ -85,7 +85,8 @@ When used with Lagrange IP, you do have to specify *newton_differences* paramete
 
 
 ### Excercise
->Given the following polynomial $L_{5} = 5x^5 + 5x^4 - 29x^3 - 4x^2 + 21x - 10$
+
+>Given the following polynomial ![polynomial](../img/interpolation_ex2_l5.png)
 >determine if it fits the following data set:
 > 
 > (-2, 84), (-1, -6), (0, -10), (1, -12), (2, 24), (5, 15120)
@@ -112,23 +113,9 @@ Polynomial 5*x**5 + 5*x**4 - 29*x**3 - 4*x**2 + 21*x - 10 fits the data.
 
 ### Excercise
 >Given the following piecewise functions determine if they are splines, and if so, of which degree.
->
->$$s_0(x)= \left\{
->\begin{array}{ll}
->      4x^2 + 2, & [0, 1] \\
->      3x + 10, & [1, 4] \\
->      x - 1 & [4, 7] \\
->\end{array} 
->\right.$$
->
->$$s_1(x)= \left\{
->\begin{array}{ll}
->      -0.4x^3 + 1.2x^2 - 3.8x + 5, & [1, 2] \\
->      -1.2x^2 + x + 1.8, & [2, 3] \\
->      0.4x^3 - 4.8x^2 + 11.8x - 9 & [3, 4] \\
->\end{array} 
->\right.$$
-
+> ![polynomial](../img/interpolation_ex3_s0.png)
+> 
+> ![polynomial](../img/interpolation_ex3_s1.png)
 #### Code
 ```python
 import sympy as sym
