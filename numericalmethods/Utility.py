@@ -3,8 +3,10 @@
 Contains methods that do not belong to a specific category.
 """
 
+from functools import reduce
 import sympy as sym
 import numpy as np
+import operator
 import json
 
 def value_sampling(fx, symbol, interval_start, interval_end, step_size=0.05):
@@ -30,6 +32,13 @@ def gap(values, index):
     """Calculate gap between two values."""
     return values[index + 1] - values[index]
 
+def invert_data(header, data, key=operator.itemgetter(1)):
+    """Inverts header with data and sorts by the provided key."""
+    return zip(*sorted(zip(header, data), key=key))
+
+def product(data):
+    """Perform multiplication on each element in the data list."""
+    return reduce(operator.mul, data, 1)
 
 class Memoized:
     """Wrapper class for function calls to be memoized.
@@ -39,6 +48,7 @@ class Memoized:
 
     @staticmethod
     def key(*args, **kwargs):
+        """Generate a consistent key from args and kwargs."""
         return args, json.dumps(kwargs)
 
     def __init__(self, function, initial_values=None):

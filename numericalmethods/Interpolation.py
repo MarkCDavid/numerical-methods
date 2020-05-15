@@ -16,8 +16,7 @@ class InterpolatingPolynomial:
         """Create an interpolating polynomial generator for base calculations, that do not require generating the interpolating polynomial."""
 
         if inverse:
-            values = sorted(zip(x_values, y_values), key=operator.itemgetter(1))
-            x_values, y_values  = [pair[1] for pair in values], [pair[0] for pair in values]
+            y_values, x_values = Utility.invert_data(x_values, y_values)
 
         self.x_values = x_values
         self.y_values = y_values
@@ -34,11 +33,7 @@ class InterpolatingPolynomial:
         Provides a possibility to calculate basis polynomial with an offset:
             (x - x1)(x - x2) for degree=2, offset=1.
         """
-        return reduce(
-            operator.mul, 
-            [self.symbol - x for i, x in enumerate(self.x_values[offset:degree+offset]) if i != skip],
-            1
-        )
+        return Utility.product([self.symbol - x for (i, x) in enumerate(self.x_values[offset:degree+offset]) if i != skip])
 
     def error(self, fx, degree):
         """Calculate the interpolation error. Returns a symbolic function."""
@@ -102,9 +97,9 @@ class NewtonInterpolatingPolynomial(InterpolatingPolynomial):
         """Calculate the interpolation error using approximation. Returns a symbolic function."""
         return sym.Abs(self.coefficient(degree, 0)) * sym.Abs(self.basis_polynomial(degree))
 
-    def coefficients(self, degree):
+    def coefficients(self, degree, offset=0):
         """Fetch Newton Difference coefficient table of specified degree."""
-        return self.__newton_differences.coefficients(degree)
+        return self.__newton_differences.coefficients(degree, offset=offset)
 
         
 class LagrangeInterpolatingPolynomial(InterpolatingPolynomial):
@@ -152,7 +147,7 @@ class InterpolatingSpline:
 
     def piece(self, index, natural=0):
         """Calculate a spline piece function, for values at specified index."""
-        raise NotImplementedError("ss")
+        raise NotImplementedError("Using a base class. No method for spline piece generation.")
 
 class LinearInterpolatingSpline(InterpolatingSpline):
     """Spline Interpolation using Linear Polynomials."""

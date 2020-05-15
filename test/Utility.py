@@ -1,6 +1,7 @@
 import unittest
 import sympy as sym
 import numpy as np
+import operator
 from numericalmethods import Utility
 from test.cassert import CustomAssertions
 
@@ -27,6 +28,10 @@ class UtilityTest(unittest.TestCase):
     def test_gap(self):
         self.assertEqual(Utility.gap([0, 2, 5], 1), 3)
         self.assertEqual(Utility.gap([3, 6, 7, 2, 5 ,1], 4), -4)
+
+    def invert_data(self):
+        self.assertEqual(Utility.invert_data([0, 1, 2], [5, 4, 3]), ([3, 4, 5], [2, 1, 0]))
+        self.assertEqual(Utility.invert_data([0, 1, 2], [5, 4, 3], key=operator.itemgetter(0)), ([0, 1, 2], [5, 4, 3]))
 
     def test_memoized(self):
 
