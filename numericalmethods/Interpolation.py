@@ -51,6 +51,10 @@ class InterpolatingPolynomial:
         """
         return sym.Abs(self.polynomial(degree + 1) - self.polynomial(degree))
 
+    def practical_error_next_degree(self, degree, newton_differences=None):
+        """Calculate the interpolation error using approximation. Returns a symbolic function."""
+        return sym.Abs(newton_differences.coefficient(degree, 0)) * sym.Abs(self.basis_polynomial(degree))
+
     def fit(self, function):
         """Check if the function was derived from the initially specified values."""
         return all([
@@ -89,19 +93,18 @@ class NewtonInterpolatingPolynomial(InterpolatingPolynomial):
         else:
             return self.polynomial(degree - 1, offset=offset) + self.basis_polynomial(degree, offset=offset) * self.coefficient(degree, offset=offset)
 
+    def practical_error_next_degree(self, degree, newton_differences=None):
+        """Calculate the interpolation error using approximation. Returns a symbolic function."""
+        return super().practical_error_next_degree(degree, self.__newton_differences)
+
     def coefficient(self, degree, index=0, offset=0):
         """Fetch Newton Difference coefficient of specified degree."""
         return self.__newton_differences.coefficient(degree, index, offset=offset)
-
-    def practical_error_next_degree(self, degree):
-        """Calculate the interpolation error using approximation. Returns a symbolic function."""
-        return sym.Abs(self.coefficient(degree, 0)) * sym.Abs(self.basis_polynomial(degree))
 
     def coefficients(self, degree, offset=0):
         """Fetch Newton Difference coefficient table of specified degree."""
         return self.__newton_differences.coefficients(degree, offset=offset)
 
-        
 class LagrangeInterpolatingPolynomial(InterpolatingPolynomial):
     """Polynomial Interpolation using Lagrange Method."""
 
@@ -113,7 +116,6 @@ class LagrangeInterpolatingPolynomial(InterpolatingPolynomial):
         """Generate Lagrangian coefficient of specified degree and index."""
         basis = self.basis_polynomial(degree + 1, skip=index, offset=offset)
         return basis/basis.subs(self.symbol, self.x_values[index + offset])
-
 
 class InterpolatingSpline:
     """Base class for Spline Interpolation."""
@@ -266,7 +268,6 @@ class CubicInterpolatingSpline(InterpolatingSpline):
     """Calculate parameter D at specified index."""
     def D(self, index):
         return Utility.gap(self.y_values, index)/Utility.gap(self.x_values, index) - Utility.gap(self.y_values, index - 1)/Utility.gap(self.x_values, index - 1)
-
 
 class NewtonDifferences:
 
