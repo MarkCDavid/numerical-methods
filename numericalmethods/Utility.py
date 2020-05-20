@@ -11,7 +11,15 @@ import json
 
 def value_sampling(fx, symbol, interval_start, interval_end, step_size=0.05):
     """Sample the values of a function within the specified interval."""
-    return [fx.subs(symbol, x) for x in np.arange(interval_start, interval_end + step_size/2.0, step_size)]
+    return [fx.subs(symbol, x) for x in arange(interval_start, interval_end, step=step_size)]
+
+def arange(start, end, step=1):
+    """Fetch a range from start to end, inclusive."""
+    return np.arange(start, end + step/2.0, step)
+
+def subinterval(points, size=2):
+    """Zip up interval points into subintervals."""
+    return list(zip(*[points[i:] for i in range(size)]))
 
 def maximum_absolute_value(fx, symbol, interval_start, interval_end, derivative_degree=0, step_size=0.05):
     """Calculate the maximum absolute value of a function within the specified interval.
@@ -25,7 +33,7 @@ def triangle_array(size, default_value=None):
     return [[default_value for _ in range(size - i)] for i in range(size)]
 
 def interval(start, end, symbol):
-    """Create an interval."""
+    """Create a logical interval."""
     return (symbol > start) & (symbol <= end)
 
 def gap(values, index):
@@ -62,4 +70,24 @@ class Memoized:
         if key not in self.values:
             self.values[key] = self.function(*args, **kwargs)
         return self.values[key]
+
+class Condition:
+    
+    def __init__(self, condition):
+        self.condition = condition
+
+class Precision(Condition):
+    
+    def check(self, current):
+        return current <= self.condition
+
+class Iteration(Condition):
+    
+    def __init__(self, condition):
+        super().__init__(condition)
+        self.iteration = 0
+    
+    def check(self, current):
+        self.iteration += 1
+        return self.iteration == self.condition
 

@@ -5,6 +5,11 @@ class CustomAssertions:
         if sym.simplify(expected - calculated) != 0:
             raise AssertionError(f'Expected: {expected} | Got: {calculated}')
 
+    def assertListAlmostEqual(self, expected, calculated, places=4):
+        for pair in zip(expected, calculated):
+            if pair[0] - pair[1] > 10**(-places):
+                raise AssertionError(f'Expected: {expected} | Got: {calculated}')
+
     def assertSymPyListEqual(self, expected, calculated):
         for pair in zip(expected, calculated):
             if sym.simplify(pair[0] - pair[1]) != 0:

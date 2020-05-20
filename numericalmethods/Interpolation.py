@@ -71,7 +71,7 @@ class InterpolatingPolynomial:
         return min([
             (group, score(group))
             for group 
-            in zip(*[self.x_values[i:] for i in range(degree + 1)])
+            in Utility.subinterval(x_values, degree)
          ], key=operator.itemgetter(1))[0]
         
     def polynomial(self, degree, offset=0):
