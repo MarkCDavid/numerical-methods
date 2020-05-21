@@ -43,17 +43,17 @@ class InterpolatingPolynomial:
         """Calculate the theoretical interpolation error. Returns a symbolic function."""
         return (Utility.maximum_absolute_value(fx, self.symbol, interval_start, interval_end, degree + 1) * sym.Abs(self.basis_polynomial(degree + 1)))/sym.factorial(degree + 1)
 
-    def practical_error_polynomial_difference(self, degree):
+    def practical_error_polynomial_difference(self, degree, offset=0):
         """Calculate the interpolation error using polynomial difference. Returns a symbolic function.
         
         Polynomial difference:
             |L_n+1 - L_n|
         """
-        return sym.Abs(self.polynomial(degree + 1) - self.polynomial(degree))
+        return sym.Abs(self.polynomial(degree + 1, offset=offset) - self.polynomial(degree, offset=offset))
 
-    def practical_error_next_degree(self, degree, newton_differences=None):
+    def practical_error_next_degree(self, degree, offset=0, newton_differences=None):
         """Calculate the interpolation error using approximation. Returns a symbolic function."""
-        return sym.Abs(newton_differences.coefficient(degree, 0)) * sym.Abs(self.basis_polynomial(degree))
+        return sym.Abs(newton_differences.coefficient(degree + 1, 0, offset=offset)) * sym.Abs(self.basis_polynomial(degree, offset=offset))
 
     def fit(self, function):
         """Check if the function was derived from the initially specified values."""
@@ -71,7 +71,7 @@ class InterpolatingPolynomial:
         return min([
             (group, score(group))
             for group 
-            in Utility.subinterval(x_values, degree)
+            in Utility.subinterval(self.x_values, degree + 1)
          ], key=operator.itemgetter(1))[0]
         
     def polynomial(self, degree, offset=0):
@@ -93,9 +93,9 @@ class NewtonInterpolatingPolynomial(InterpolatingPolynomial):
         else:
             return self.polynomial(degree - 1, offset=offset) + self.basis_polynomial(degree, offset=offset) * self.coefficient(degree, offset=offset)
 
-    def practical_error_next_degree(self, degree, newton_differences=None):
+    def practical_error_next_degree(self, degree, offset=0, newton_differences=None):
         """Calculate the interpolation error using approximation. Returns a symbolic function."""
-        return super().practical_error_next_degree(degree, self.__newton_differences)
+        return super().practical_error_next_degree(degree, offset=offset, newton_differences=self.__newton_differences)
 
     def coefficient(self, degree, index=0, offset=0):
         """Fetch Newton Difference coefficient of specified degree."""

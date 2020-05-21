@@ -22,7 +22,7 @@ You are provided with the following classes:
 
 ### Excercise
 
->Given the following data pairs (0, 0), (1, 1), (2, 8), (4, 64) find linear,
+>Given the following data pairs (0, 0), (1, 1), (2, 8), (4, 64), (5, 125) find linear,
 >square and cubic interpolating polynomials and find their value at x = 2.
 >
 >Measure the error made for each degree of interpolating polynomial.
@@ -35,24 +35,29 @@ from numericalmethods import Interpolation
 
 x = sym.Symbol('x')
 
-x_values = [0, 1, 2, 4]
-y_values = [0, 1, 8, 64]
-at_x = 2
+x_values = [0, 1, 2, 4, 5]
+y_values = [0, 1, 8, 64, 125]
+at_x = 3
 
 nip = Interpolation.NewtonInterpolatingPolynomial(x_values, y_values, x)
 
-for i in range(1, 4):
-    print(f'L{i}({at_x}): {nip.polynomial(i).subs(x, at_x)}')
-    print(f'Error of L{i}({at_x}): {nip.practical_error_next_degree(i).subs(x, at_x)}')
+print(f'L1({at_x}): {nip.polynomial(1, offset=2).subs(x, at_x)}')
+print(f'Error of L1({at_x}): {nip.practical_error_next_degree(1, offset=2).subs(x, at_x)}')
+
+print(f'L2({at_x}): {nip.polynomial(2, offset=1).subs(x, at_x)}')
+print(f'Error of L2({at_x}): {nip.practical_error_next_degree(2, offset=1).subs(x, at_x)}')
+
+print(f'L3({at_x}): {nip.polynomial(3, offset=0).subs(x, at_x)}')
+print(f'Error of L3({at_x}): {nip.practical_error_next_degree(3, offset=0).subs(x, at_x)}')
 ```
 #### Results
 ```
-L1(2): 2.00000000000000
-Error of L1(2): 2.00000000000000
-L2(2): 8.00000000000000
-Error of L2(2): 6.00000000000000
-L3(2): 8.00000000000000
-Error of L3(2): 0
+L1(3): 36.0000000000000
+Error of L1(3): 11.0000000000000
+L2(3): 29.0000000000000
+Error of L2(3): 2.00000000000000
+L3(3): 27.0000000000000
+Error of L3(3): 
 ```
 
 #### Caveats
@@ -77,11 +82,15 @@ As such, you have to call the SymPy function [subs(symbol, value)](https://docs.
 If you do not have the original function to measure the error, you can use practical error evaluation.
 Base Interpolation class provides a function ```practical_error_polynomial_difference(degree)``` which can be used interchangebly by both Netwon and Lagrange interpolation classes.
 
-Unfortunetaly, in this case, trying to call this method for degree 3 will result in an error, as the method would try to calculate the polynomial of degree 4, but the excercise only provides 4 data points and it is impossible to generate a polynomial of degree 4. You have to use the function ```practical_error_next_degree(degree, newton_differences)```. 
+When ```practical_error_next_degree(degree, newton_differences)``` is used with Newton IP, you do not have to specify *newton_differences* parameter, as the class passes that parameter by itself. 
 
-When used with Newton IP, you do not have to specify *newton_differences* parameter, as the class passes that parameter by itself. 
+When ```practical_error_next_degree(degree, newton_differences)``` is used with Lagrange IP, you do have to specify *newton_differences* parameter. Simply create the NewtonDifferences class with the data and pass it through to the method.
 
-When used with Lagrange IP, you do have to specify *newton_differences* parameter. Simply create the NewtonDifferences class with the data and pass it through to the method.
+*Offset*
+
+In this case, the offset is required for both linear and square IP. By default the offset is 0 and the IP is generated from the first values.
+
+As the excercise asks you to calculate the value ```f(3)```, for example, with default offset of 0, for square IP the points ```(0, 0), (1, 1), (2, 8)``` are used and the value 3 does not appear in the interval of (0, 2). Setting the offset to 1 or 2 would use the points ```(1, 1), (2, 8), (4, 64)``` and ```(2, 8), (4, 64), (5, 125)``` respectively. 
 
 
 ### Excercise
