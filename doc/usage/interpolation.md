@@ -82,9 +82,9 @@ As such, you have to call the SymPy function [subs(symbol, value)](https://docs.
 If you do not have the original function to measure the error, you can use practical error evaluation.
 Base Interpolation class provides a function ```practical_error_polynomial_difference(degree)``` which can be used interchangebly by both Netwon and Lagrange interpolation classes.
 
-When ```practical_error_next_degree(degree, newton_differences)``` is used with Newton IP, you do not have to specify *newton_differences* parameter, as the class passes that parameter by itself. 
+When ```practical_error_next_degree(degree, offset, newton_differences)``` is used with Newton IP, you do not have to specify *newton_differences* parameter, as the class passes that parameter by itself. 
 
-When ```practical_error_next_degree(degree, newton_differences)``` is used with Lagrange IP, you do have to specify *newton_differences* parameter. Simply create the NewtonDifferences class with the data and pass it through to the method.
+When ```practical_error_next_degree(degree, offset, newton_differences)``` is used with Lagrange IP, you do have to specify *newton_differences* parameter. Simply create the NewtonDifferences class with the data and pass it through to the method.
 
 *Offset*
 
