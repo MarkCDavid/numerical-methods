@@ -7,24 +7,6 @@ from numericalmethods import Interpolation
 
 x = sym.Symbol('x')
 
-
-
-x_values = [0, 1, 2, 4, 5]
-y_values = [0, 1, 8, 64, 125]
-at_x = 3
-
-nip = Interpolation.NewtonInterpolatingPolynomial(x_values, y_values, x)
-
-print(f'L1({at_x}): {nip.polynomial(1, offset=2).subs(x, at_x)}')
-print(f'Error of L1({at_x}): {nip.practical_error_next_degree(1, offset=2).subs(x, at_x)}')
-
-print(f'L2({at_x}): {nip.polynomial(2, offset=1).subs(x, at_x)}')
-print(f'Error of L2({at_x}): {nip.practical_error_next_degree(2, offset=1).subs(x, at_x)}')
-
-print(f'L3({at_x}): {nip.polynomial(3, offset=0).subs(x, at_x)}')
-print(f'Error of L3({at_x}): {nip.practical_error_next_degree(3, offset=0).subs(x, at_x)}')
-print("===== Excercise 1 =====")
-
 x_values = [0, 1, 2, 4]
 y_values = [0, 1, 4, 16]
 at_x = 0.5
