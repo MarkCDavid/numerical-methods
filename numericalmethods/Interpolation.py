@@ -245,31 +245,31 @@ class CubicInterpolatingSpline(InterpolatingSpline):
             return (D - A*self.b(index - 1))/(A*self.a(index - 1) + B)
 
     def h(self, index):
-    """Calculate parameter h at specified index."""
+        """Calculate parameter h at specified index."""
         return (self.m(index + 1) - self.m(index))/(6*Utility.gap(self.x_values, index))
 
     def g(self, index):
-    """Calculate parameter g at specified index."""
+        """Calculate parameter g at specified index."""
         return self.m(index)/2
 
     def e(self, index):
-    """Calculate parameter e at specified index."""
+        """Calculate parameter e at specified index."""
         return Utility.gap(self.y_values, index)/Utility.gap(self.x_values, index) - (Utility.gap(self.x_values, index)*(2*self.m(index) + self.m(index + 1)))/6
 
     def A(self, index):
-    """Calculate parameter A at specified index."""
+        """Calculate parameter A at specified index."""
         return Utility.gap(self.x_values, index - 1)/6
 
     def B(self, index):
-    """Calculate parameter B at specified index."""
+        """Calculate parameter B at specified index."""
         return (Utility.gap(self.x_values, index - 1) + Utility.gap(self.x_values, index))/3
 
     def C(self, index):
-    """Calculate parameter C at specified index."""
+        """Calculate parameter C at specified index."""
         return Utility.gap(self.x_values, index)/6
 
     def D(self, index):
-    """Calculate parameter D at specified index."""
+        """Calculate parameter D at specified index."""
         return Utility.gap(self.y_values, index)/Utility.gap(self.x_values, index) - Utility.gap(self.y_values, index - 1)/Utility.gap(self.x_values, index - 1)
 
 class NewtonDifferences:
