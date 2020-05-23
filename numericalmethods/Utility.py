@@ -61,6 +61,7 @@ def product(data):
 
 class Parity(enum.Enum):
     """Parity enumeration."""
+    
     EVEN = 0,
     ODD = 1
 
@@ -89,7 +90,9 @@ class Memoized:
 
 class Condition:
     """Base class for condition."""
+
     def __init__(self, condition):
+        """Create condition class instance."""
         self.condition = condition
 
 class Precision(Condition):
