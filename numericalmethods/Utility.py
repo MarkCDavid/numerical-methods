@@ -8,6 +8,7 @@ import sympy as sym
 import numpy as np
 import operator
 import json
+import enum
 
 def value_sampling(fx, symbol, interval, step_size=0.05):
     """Sample the values of a function within the specified interval."""
@@ -29,6 +30,15 @@ def maximum_absolute_value(fx, symbol, interval, derivative_degree=0, step_size=
     """
     return max(value_sampling(sym.Abs(sym.diff(fx, symbol, derivative_degree)), symbol, interval, step_size))
 
+def signum(value):
+    """Get the sign of the value."""
+    return 1 if value >= 0 else -1
+
+def same_sign(function, symbol, interval, step_size=0.05):
+    """Check if the function is of the same sign over the provided interval."""
+    sign = signum(function.subs(symbol, interval[0]))
+    return all([sign == signum(x) for x in value_sampling(function, symbol, interval, step_size=step_size)])
+
 def triangle_array(size, default_value=None):
     """Create a triangular array."""
     return [[default_value for _ in range(size - i)] for i in range(size)]
@@ -48,6 +58,11 @@ def invert_data(header, data, key=operator.itemgetter(1)):
 def product(data):
     """Perform multiplication on each element in the data list."""
     return reduce(operator.mul, data, 1)
+
+class Parity(enum.Enum):
+    """Parity enumeration."""
+    EVEN = 0,
+    ODD = 1
 
 class Memoized:
     """Wrapper class for function calls to be memoized.
@@ -73,22 +88,28 @@ class Memoized:
         return self.values[key]
 
 class Condition:
-    
+    """Base class for condition."""
     def __init__(self, condition):
         self.condition = condition
 
 class Precision(Condition):
+    """Condition for precision."""
     
     def check(self, current):
+        """Check if provided value is more precise than condition."""
         return current <= self.condition
 
 class Iteration(Condition):
+    """Condition for iteration."""
     
     def __init__(self, condition):
+        """Initialize iteration counter to 0."""
         super().__init__(condition)
         self.iteration = 0
     
     def check(self, current):
+        """Iterate iteration counter and check if we have done specified amount of iterations."""
+        if self.iteration >= self.condition:
+            return True
         self.iteration += 1
-        return self.iteration == self.condition
 
