@@ -116,3 +116,71 @@ class Iteration(Condition):
             return True
         self.iteration += 1
 
+class Norms:
+    """Vector and matrix norms."""
+
+    @staticmethod
+    def vector_N1(X):
+        """Vector Norm.
+        
+        ||X|| = max|xi| for i in 1...n
+        """
+        return np.absolute(X).max()
+
+    @staticmethod
+    def vector_N2(X):
+        """Vector Norm.
+        
+        ||X|| = sum of |xi| for i in 1...n
+        """
+        return np.sum(np.absolute(X))
+
+    @staticmethod
+    def vector_N3(X):
+        """Vector Norm.
+        
+        ||X|| = sqrt(x1^2 + x2^2 + ... xn^2)
+        """
+        return np.sqrt(np.sum([x**2 for x in X]))
+
+    @staticmethod
+    def matrix_N(A):
+        """Matrix Norm.
+        
+        ||A|| = sqrt(sum of aij^2 for i,j in 1...n)
+        """
+        return np.sqrt(sum([a**2 for a in A.flatten()]))
+
+    @staticmethod
+    def matrix_N1(A):
+        """Matrix Norm.
+        
+        ||A|| = max(sum |aij| for j in 1...n) for i in 1...n
+        """
+        return np.array([sum(np.absolute(Ai)) for Ai in A]).max()
+
+    @staticmethod
+    def matrix_N2(A):
+        """Matrix Norm.
+        
+        ||A|| = max(sum |aij| for i in 1...n) for j in 1...n
+        """
+        return np.array([sum(np.absolute(Aj)) for Aj in A.T]).max()
+
+    @staticmethod
+    def matrix_N3(A):
+        """Matrix Norm.
+        
+        ||A|| = sqrt(max eigen_i(A * A^T) for i in 1...n)
+        """
+        return np.sqrt(np.max(Norms.eigenvalues(np.matmul(A, A.T))))
+
+    @staticmethod
+    def eigenvalues(A):
+        """Eigenvalues."""
+        return np.linalg.eigvals(A)
+
+    @staticmethod
+    def absolute_eigenvalue(A, key=max):
+        """Absolute eigenvalue selected by key."""
+        return key(np.absolute(Norms.eigenvalues(A)))

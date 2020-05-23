@@ -21,11 +21,12 @@ class NonLinearEquations:
     def solve(self, condition):
         """Solve the non-linear equation using condition to stop iterating."""
         succ = self.successor()
+        iteration = 0
         while not condition.check(self.precision(succ)):
-            self.iteration += 1
+            iteration += 1
             self.iterate(succ)   
             succ = self.successor()
-        return (sym.N(succ), self.iteration, self.precision(succ), self.true_root(succ))
+        return (sym.N(succ), iteration, self.precision(succ), self.true_root(succ))
 
     def root_parity(self, interval):
         """Calculate the parity of the count of roots."""
