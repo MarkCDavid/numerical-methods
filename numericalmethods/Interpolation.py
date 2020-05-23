@@ -273,6 +273,7 @@ class CubicInterpolatingSpline(InterpolatingSpline):
         return Utility.gap(self.y_values, index)/Utility.gap(self.x_values, index) - Utility.gap(self.y_values, index - 1)/Utility.gap(self.x_values, index - 1)
 
 class NewtonDifferences:
+    """Newton Differences container."""
 
     def __init__(self, x_values, y_values):
         """Construct NewtonDifferences data class."""
