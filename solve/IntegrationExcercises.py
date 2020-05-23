@@ -76,7 +76,7 @@ integration_data = Integration.ValuePairIntegrationData(x_values, y_values, x)
 interval = (0, 80)
 print(Integration.SimpsonIntegration(integration_data).integrate(interval, Integration.NodeCount(2)))
 print(Integration.SimpsonIntegration(integration_data).integrate(interval, Integration.NodeCount(4)))
-print(Integration.SimpsonIntegration(integration_data).runge_error(interval, Integration.NodeCount(4)))
+print(abs(Integration.SimpsonIntegration(integration_data).runge_error(interval, Integration.NodeCount(4))))
 
 
 print("===== Excercise 8 =====")

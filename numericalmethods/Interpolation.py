@@ -14,7 +14,6 @@ class InterpolatingPolynomial:
 
     def __init__(self, x_values, y_values, symbol, inverse=False):
         """Create an interpolating polynomial generator for base calculations, that do not require generating the interpolating polynomial."""
-
         if inverse:
             y_values, x_values = Utility.invert_data(x_values, y_values)
 
@@ -147,6 +146,10 @@ class InterpolatingSpline:
         """Generate the spline. Non-functional for the base class."""
         return [(self.piece(index), Utility.interval(self.x_values[index], self.x_values[index + 1], self.symbol)) for index in range(self.size - 1)]
 
+    def piecewise_spline(self, natural=0):
+        """Generate a SymPy piecewise spline. Non-functional for the base class."""
+        return sym.Piecewise(*self.spline(natural=natural))
+
     def piece(self, index, natural=0):
         """Calculate a spline piece function, for values at specified index."""
         raise NotImplementedError("Using a base class. No method for spline piece generation.")
@@ -241,32 +244,32 @@ class CubicInterpolatingSpline(InterpolatingSpline):
             A = self.A(index)
             return (D - A*self.b(index - 1))/(A*self.a(index - 1) + B)
 
-    """Calculate parameter h at specified index."""
     def h(self, index):
+    """Calculate parameter h at specified index."""
         return (self.m(index + 1) - self.m(index))/(6*Utility.gap(self.x_values, index))
 
-    """Calculate parameter g at specified index."""
     def g(self, index):
+    """Calculate parameter g at specified index."""
         return self.m(index)/2
 
-    """Calculate parameter e at specified index."""
     def e(self, index):
+    """Calculate parameter e at specified index."""
         return Utility.gap(self.y_values, index)/Utility.gap(self.x_values, index) - (Utility.gap(self.x_values, index)*(2*self.m(index) + self.m(index + 1)))/6
 
-    """Calculate parameter A at specified index."""
     def A(self, index):
+    """Calculate parameter A at specified index."""
         return Utility.gap(self.x_values, index - 1)/6
 
-    """Calculate parameter B at specified index."""
     def B(self, index):
+    """Calculate parameter B at specified index."""
         return (Utility.gap(self.x_values, index - 1) + Utility.gap(self.x_values, index))/3
 
-    """Calculate parameter C at specified index."""
     def C(self, index):
+    """Calculate parameter C at specified index."""
         return Utility.gap(self.x_values, index)/6
 
-    """Calculate parameter D at specified index."""
     def D(self, index):
+    """Calculate parameter D at specified index."""
         return Utility.gap(self.y_values, index)/Utility.gap(self.x_values, index) - Utility.gap(self.y_values, index - 1)/Utility.gap(self.x_values, index - 1)
 
 class NewtonDifferences:

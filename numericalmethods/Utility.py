@@ -9,24 +9,25 @@ import numpy as np
 import operator
 import json
 
-def value_sampling(fx, symbol, interval_start, interval_end, step_size=0.05):
+def value_sampling(fx, symbol, interval, step_size=0.05):
     """Sample the values of a function within the specified interval."""
-    return [fx.subs(symbol, x) for x in arange(interval_start, interval_end, step=step_size)]
+    return [fx.subs(symbol, x) for x in arange(interval, step_size=step_size)]
 
-def arange(start, end, step=1):
+def arange(interval, *, step_size=None, step_evaluator=None):
     """Fetch a range from start to end, inclusive."""
-    return np.arange(start, end + step/2.0, step)
+    step_size = step_size if step_evaluator is None else step_evaluator.step_size(interval)
+    return np.arange(interval[0], interval[1] + step_size/2.0, step_size)
 
 def subinterval(points, size=2):
     """Zip up interval points into subintervals."""
     return list(zip(*[points[i:] for i in range(size)]))
 
-def maximum_absolute_value(fx, symbol, interval_start, interval_end, derivative_degree=0, step_size=0.05):
+def maximum_absolute_value(fx, symbol, interval, derivative_degree=0, step_size=0.05):
     """Calculate the maximum absolute value of a function within the specified interval.
     
     Provides a possibility to provide a derivative degree.
     """
-    return max(value_sampling(sym.Abs(sym.diff(fx, symbol, derivative_degree)), symbol, interval_start, interval_end, step_size))
+    return max(value_sampling(sym.Abs(sym.diff(fx, symbol, derivative_degree)), symbol, interval, step_size))
 
 def triangle_array(size, default_value=None):
     """Create a triangular array."""
