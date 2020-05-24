@@ -184,3 +184,15 @@ class Norms:
     def absolute_eigenvalue(A, key=max):
         """Absolute eigenvalue selected by key."""
         return key(np.absolute(Norms.eigenvalues(A)))
+
+class TridiagonalMatrix:
+
+    def __init__(self, left_diagonal, middle_diagonal, right_diagonal, function_values):
+        self.left_diagonal = left_diagonal
+        self.middle_diagonal = middle_diagonal
+        self.right_diagonal = right_diagonal
+        self.function_values = function_values
+        self.A = [0, *self.left_diagonal]
+        self.B = [*self.middle_diagonal]
+        self.C = [*self.right_diagonal, 0]
+        self.f = [*self.function_values]
